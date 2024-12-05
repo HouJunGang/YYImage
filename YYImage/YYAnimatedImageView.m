@@ -29,7 +29,7 @@ dispatch_semaphore_signal(view->_lock);
 static int64_t _YYDeviceMemoryTotal() {
     int64_t mem = [[NSProcessInfo processInfo] physicalMemory];
     if (mem < -1) mem = -1;
-        return mem;
+    return mem;
 }
 
 static int64_t _YYDeviceMemoryFree() {
@@ -256,7 +256,7 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
                  [holder class];
              });
          }
-    );
+         );
     _link.paused = YES;
     _time = 0;
     if (_curIndex != 0) {
@@ -440,7 +440,7 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
                      [_buffer removeObjectForKey:key];
                  }
              }
-        )//LOCK
+             )//LOCK
     }];
 }
 
@@ -454,7 +454,7 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
                  [_buffer removeObjectForKey:key];
              }
          }
-     )//LOCK
+         )//LOCK
 }
 
 - (void)step:(CADisplayLink *)link {
@@ -510,7 +510,7 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
          } else {
              _bufferMiss = YES;
          }
-    )//LOCK
+         )//LOCK
     
     if (!_bufferMiss) {
         [self.layer setNeedsDisplay]; // let system call `displayLayer:` before runloop sleep
@@ -526,8 +526,13 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
 }
 
 - (void)displayLayer:(CALayer *)layer {
-    if (_curFrame) {
-        layer.contents = (__bridge id)_curFrame.CGImage;
+    UIImage *currentFrame = _curFrame;
+    if (!currentFrame) {
+        currentFrame = self.image;
+    }
+    if (currentFrame) {
+        layer.contentsScale = currentFrame.scale;
+        layer.contents = (__bridge id)currentFrame.CGImage;
     }
 }
 
@@ -592,7 +597,7 @@ typedef NS_ENUM(NSUInteger, YYAnimatedImageType) {
              _loopEnd = NO;
              _bufferMiss = NO;
              [self.layer setNeedsDisplay];
-        )//LOCK
+             )//LOCK
     };
     
     if (pthread_main_np()) {
